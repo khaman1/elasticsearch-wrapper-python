@@ -1,4 +1,4 @@
-I'm using this wrapper as well. All functions are tested successfully. You should figure out how to use it. To amplify the strength of elasticsearch, a multithreading should be used, as well as using cache to reduce workload
+I am using this wrapper as well. All functions are tested successfully. You should figure out how to use it. To amplify the strength of elasticsearch, a multithreading should be used, as well as using cache to reduce workload. Hope this elasticsearch would be helpful for your project.
 
 
 
