@@ -10,9 +10,9 @@ result    = 	elasticsearch_base(host='127.0.0.1:9250',index='real_estate', passw
                 .match_phrase(field='address', input=[user_choice_array['select-district']])\
                 .filter_in_time_range(field='posted_date',last_num_of_days=30)\
                 .sort(user_choice_array['sort'])\
-				.source('ad_id')\
-                .exec(count=ITEMS_PER_PAGE*MAX_PAGE_NUM)
-				.json(
+		.source('ad_id')\
+                .exec(count=ITEMS_PER_PAGE*MAX_PAGE_NUM)\
+		.json(
                     start=ITEMS_PER_PAGE*(page_num-1),
                     end=ITEMS_PER_PAGE*page_num
                 )
