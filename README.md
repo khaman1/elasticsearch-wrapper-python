@@ -1,7 +1,7 @@
 I am using this wrapper as well. All functions are tested successfully. You should figure out how to use it. To amplify the strength of elasticsearch, a multithreading should be used, as well as using cache to reduce workload. Hope this elasticsearch would be helpful for your project.
 
 
-
+```
 result    = 	elasticsearch_base(host='127.0.0.1:9250',index='real_estate', password='123456')\
                 .match_phrase(field='city_name',      input='new-york')\
                 .match_phrase(field='district_name',  input='manhattan')\
@@ -16,3 +16,4 @@ result    = 	elasticsearch_base(host='127.0.0.1:9250',index='real_estate', passw
                     start=ITEMS_PER_PAGE*(page_num-1),
                     end=ITEMS_PER_PAGE*page_num
                 )
+```
