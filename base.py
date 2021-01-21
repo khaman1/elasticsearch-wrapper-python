@@ -5,12 +5,12 @@ from datetime import datetime, timedelta
 
 
 class elasticsearch_base:
-    request                 = ''
-    s                       = ''
-    result                  = ''
-    my_Q                    = ''
-    index                   = ''
-    client                  = ''
+    request = ''
+    s = ''
+    result = ''
+    my_Q = ''
+    index = ''
+    client = ''
 
     def __init__(self, host='127.0.0.1:9200', request_timeout=30, index='', request='', password=''):
         self.check_permission()
@@ -18,10 +18,11 @@ class elasticsearch_base:
         if not password:
             self.client = Elasticsearch(host)
         else:
-            self.client = Elasticsearch(host, http_auth='elastic:'+password, timeout=2, request_timeout=3, max_retries=0)
+            self.client = Elasticsearch(
+                host, http_auth='elastic:'+password, timeout=2, request_timeout=3, max_retries=0)
 
-        self.s      = Search(using=self.client, index=index)
-        self.index  = index
+        self.s = Search(using=self.client, index=index)
+        self.index = index
 
         if request:
             self.process_request(request)
@@ -37,7 +38,7 @@ class elasticsearch_base:
             input = [input]
 
         ######################
-        ######################)
+        # )
         exec('self.my_Q = Q("match_phrase", '+field+'="'+input[0]+'")')
         for item in input[1:]:
             exec('self.my_Q |= Q("match_phrase", '+field+'="'+item+'")')
@@ -54,7 +55,7 @@ class elasticsearch_base:
             input = [input]
 
         ######################
-        ######################)
+        # )
         exec('self.my_Q = Q("match_phrase_prefix", '+field+'="'+input[0]+'")')
         for item in input[1:]:
             exec('self.my_Q |= Q("match_phrase_prefix", '+field+'="'+item+'")')
@@ -71,7 +72,7 @@ class elasticsearch_base:
             input = [input]
 
         ######################
-        ######################)
+        # )
         exec('self.my_Q = Q("match", '+field+'="'+input[0]+'")')
         for item in input[1:]:
             exec('self.my_Q |= Q("match", '+field+'="'+item+'")')
@@ -87,21 +88,22 @@ class elasticsearch_base:
 
         ######################
         ######################
-        exec("self.s = self.s.filter('range', "+field+"={'gte': m_range[0], 'lte': m_range[1]})")
+        exec("self.s = self.s.filter('range', "+field +
+             "={'gte': m_range[0], 'lte': m_range[1]})")
 
         return self
 
     def filter_in_time_range(self, field, last_num_of_days=3):
         start_date, end_date = self.get_last_day_range(days=last_num_of_days)
-        
+
         self.filter_in_range(field, m_range=[start_date, end_date])
-        
+
         return self
 
     def get_last_day_range(self, days=3):
-        filtered_day_num    = timedelta(days=days)
-        start_date          = (datetime.now() - filtered_day_num).strftime('%Y-%m-%d')
-        end_date            = datetime.now().strftime('%Y-%m-%d')
+        filtered_day_num = timedelta(days=days)
+        start_date = (datetime.now() - filtered_day_num).strftime('%Y-%m-%d')
+        end_date = datetime.now().strftime('%Y-%m-%d')
 
         return start_date, end_date
 
@@ -117,7 +119,7 @@ class elasticsearch_base:
 
     def exec(self, count=0):
         if not count:
-            count   = self.s.count()
+            count = self.s.count()
 
         try:
             self.result = self.s[0:count].execute()
@@ -128,9 +130,9 @@ class elasticsearch_base:
 
         return self
 
-    def json(self,start=0,end=-1):
+    def json(self, start=0, end=-1):
         output = []
-        
+
         if self.result:
             if self.result['hits']['hits']:
                 if end == start:
@@ -148,7 +150,8 @@ class elasticsearch_base:
         pass
 
     def get(self, field, value):
-        exec("self.result = self.match_phrase(field='"+field+"',input='"+str(value)+"').source(['"+field+"']).exec(count=1).out()")
+        exec("self.result = self.match_phrase(field='"+field+"',input='" +
+             str(value)+"').source(['"+field+"']).exec(count=1).out()")
         return self.result
 
     def save(self, json):
@@ -158,15 +161,16 @@ class elasticsearch_base:
     def out(self):
         return self.result
 
-    def query(self,field,input):
+    def query(self, field, input):
         if type(input) == list:
             input = input[0]
 
         exec("self.s = self.s.query(Match("+field+"='"+input+"'))")
         return self
 
-    def update(self,json):
-        document_id =   self.source(['ad_id'])\
-                            .exec(count=1).result['hits']['hits'][0]['_id']
+    def update(self, json):
+        document_id = self.source(['ad_id'])\
+            .exec(count=1).result['hits']['hits'][0]['_id']
 
-        self.client.update(index=self.index, id=document_id, body={"doc":json}, refresh=True)
+        self.client.update(index=self.index, id=document_id,
+                           body={"doc": json}, refresh=True)
